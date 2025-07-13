@@ -1,0 +1,232 @@
+---
+title: "Functions-Iterations-Dates-purr"
+format: html
+editor: visual
+---
+
+## Instructions
+
+Complete the following exercises using the `lubridate` and `purrr` packages in R. Ensure that your solutions are optimized and use functional programming principles where applicable.
+
+1.  Load the necessary libraries.
+2.  Answer each question in separate R code chunks.
+3.  Provide detailed explanations for your approach.
+4.  Submit the rendered HTML file.
+
+## Exercise Functions:
+
+### Question 1
+
+Write a function (using r code and structure demonstrated in class) to calculate a z score for a given observed value, a mean, and a standard deviation value. And then use your function to find a z score for the following problem. (Research the internet to find the formula used to calculate a z score)\
+Observed value = 25.77, mean = 23.54, standard deviation = 2.442
+
+```{r}
+library(tidyverse)
+
+# Define a function to calculate the z-score
+z_score <- function(obs_value, mean, std_dev) {
+  (obs_value - mean) / std_dev
+}
+
+# Create a data frame with the observed value, mean, and standard deviation
+data <- data.frame(
+  obs_value = 25.77,
+  mean = 23.54,
+  std_dev = 2.442
+)
+
+# Call the z_score function with the values provided
+z_score(25.77, 23.54,2.442)
+```
+
+### Question 2
+
+Write a function to calculate the natural log of a number multiplied by the common log of the same number divided by the cube root of a given prime number, $\dfrac{\ln x \times \log x }{\sqrt[3]{p}}$.\
+Use your function to find the answer if the number to be used for both log expressions is 32 and the given prime number is 11, $x = 32, \;\;p=11$.\
+Also use R code to round your answer to the nearest tenth
+
+```{r}
+# Define a custom function called ln_formula that takes two inputs, x and p.
+
+ln_formula <- function(x, p){
+  (log(x) * log10(x)) / (p^(1/3))
+}
+
+# Call the function
+ln_formula(32, 11)
+```
+
+### Question 3
+
+Use and show R coding to calculate the standard deviation for each variable of the data table `mtcars` using the `Special For Loop Method`, which includes three components:
+
+-   Output – an object to store the results
+
+-   Sequence – the set of items to loop through
+
+-   Body – the operations performed in each iteration
+
+```{r}
+# Create an empty numeric vector to store standard deviations
+# Its length matches the number of columns in the 'mtcars' dataset
+sd_vec <- vector(mode = "numeric", length = length(mtcars))
+
+# Loop through each column in 'mtcars' using its index
+for (i in seq_along(mtcars)) {
+  sd_vec[[i]] <- sd(mtcars[[i]], na.rm = TRUE)
+}
+
+# Results
+sd_vec
+```
+
+### Question 4:
+
+Write only one line of the code to return only the leap years fo years 2024, 3021, 2000 or 1800, 800, 5050, 600 and 7156. using subsetting with `[]` and without using built-in functions.
+
+```{r}
+# Define a vector of years
+years <- c(2024, 3021, 2000, 1800, 800, 5050, 600, 7156)
+
+# Use logical indexing to select only the leap years
+# A year is a leap year if:
+#   - it is divisible by 4 AND not divisible by 100, OR
+#   - it is divisible by 400
+years[(years %% 4 == 0 & years %% 100 != 0) | (years %% 400 == 0)]
+```
+
+## Advanced Date Manipulation with lubridate
+
+### Question 5:
+
+Generate a sequence of dates from **January 1, 2015** to **December 31, 2025**, spaced by every **two months**. Extract the **year**, **quarter**, and **ISO week number** for each date.
+
+```{r}
+# Necessary packagee
+library(lubridate)
+
+# Create a sequence of dates starting from Jan 1, 2015 to Dec 31, 2025. Each date is spaced 2 months apart
+date_seq <- seq(ymd("2015-01-01"), ymd("2025-12-31"), by = "2 months")
+
+# Create a data frame with date-related features
+output <- data.frame(
+  date = date_seq,
+  year = year(date_seq),
+  quarter = quarter(date_seq),
+  iso_week = isoweek(date_seq)
+)
+# Results (first 6 variables)
+head(output)
+```
+
+### Question 6:
+
+Given the following dates, compute the difference in **months** and **weeks** between each consecutive pair.
+
+``` r
+sample_dates <- c("2018-03-15", "2020-07-20", "2023-01-10", "2025-09-05")
+```
+
+```{r}
+library(tibble)
+
+sample_dates <- c("2018-03-15", "2020-07-20", "2023-01-10", "2025-09-05")
+
+# Convert to Date objects
+sample_dates <- ymd(sample_dates)
+
+# Calculate differences between consecutive dates
+month_diffs <- interval(sample_dates[-length(sample_dates)], sample_dates[-1]) %/% months(1)
+week_diffs  <- as.numeric(diff(sample_dates), units = "weeks")
+
+# Combine into a tibble for clarity
+diffs <- tibble(
+  From = sample_dates[-length(sample_dates)],
+  To = sample_dates[-1],
+  months_between = month_diffs,
+  weeks_between = round(week_diffs, 1)
+)
+
+diffs
+
+```
+
+### Question 7: Higher-Order Functions with purrr
+
+Using `map()` and `map_dbl()`, compute the **mean**, **median**, and **standard deviation** for each numeric vector in the following list:
+
+``` r
+num_lists <- list(c(4, 16, 25, 36, 49), c(2.3, 5.7, 8.1, 11.4), c(10, 20, 30, 40, 50))
+```
+
+```{r}
+# Necessary package
+library(purrr)
+
+num_lists <- list(c(4, 16, 25, 36, 49), c(2.3, 5.7, 8.1, 11.4), c(10, 20, 30, 40, 50))
+
+# mean
+map_dbl(num_lists, mean)
+
+#median
+map_dbl(num_lists, median)
+
+# sd
+map_dbl(num_lists, sd)
+```
+
+### Question 8: Combining lubridate and purrr
+
+Given a list of mixed date formats, use `map()` and `possibly()` from `purrr` to safely convert them to **Date** format and extract the **month name**.
+
+``` r
+date_strings <- list("2023-06-10", "2022/12/25", "15-Aug-2021", "InvalidDate")
+```
+
+```{r}
+# List of mixed date strings
+date_strings <- list("2023-06-10", "2022/12/25", "15-Aug-2021", "InvalidDate")
+
+# Define a safer date parser
+safe_parse_date <- possibly(function(x) {
+  # Try parsing formats one by one and return the first successful one
+  for (f in list(ymd, mdy, dmy)) {
+    parsed <- suppressWarnings(f(x))
+    if (!is.na(parsed)) return(parsed)
+  }
+  return(NA)  # Return NA if none work
+}, otherwise = NA)
+
+# Parse the dates
+parsed_dates <- map(date_strings, safe_parse_date)
+
+# Extract month names, using as.character() to avoid the purrr warning
+month_names <- map_chr(parsed_dates, function(date) {
+  if (!is.na(date)) {
+    return(as.character(month(date, label = TRUE, abbr = FALSE)))
+  } else {
+    return(NA_character_)
+  }
+})
+
+# Show the result
+month_names
+```
+
+## Submission
+
+-   Save your Quarto file after completing each problem, render it, then stage and commit the changes.\
+
+-   Include well-commented code and clear explanations.\
+
+-   Make at least **one commit per question**.\
+
+-   Submit the rendered file to **Canvas** and push it to your **GitHub repository**.\
+
+-   Provide the link to your GitHub repository in the **Canvas gradebook** as a text submission.\
+
+🔹 **Each problem is worth 10 points.**\
+
+🔹 You will receive an additional **20 points** if you correctly push your completed file to GitHub and make at least one commit for each question.\
+
+**Good luck!**

@@ -1,0 +1,8 @@
+"0","sd_vec <- vector(mode = ""numeric"", length = length(mtcars))"
+"0","for (i in seq_along(mtcars)) {"
+"0","  sd_vec[[i]] <- sd(mtcars[[i]], na.rm = TRUE)"
+"0","}"
+"0","sd_vec"
+"1"," [1]   6.0269481   1.7859216 123.9386938  68.5628685   0.5346787   0.9784574   1.7869432   0.5040161   0.4989909   0.7378041
+[11]   1.6152000
+"
