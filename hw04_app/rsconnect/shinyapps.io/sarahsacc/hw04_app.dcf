@@ -1,0 +1,12 @@
+name: hw04_app
+title: hw04_app
+username: sarahsacc
+account: sarahsacc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15129361
+bundleId: 10683482
+url: https://sarahsacc.shinyapps.io/hw04_app/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
